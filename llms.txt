@@ -11,7 +11,8 @@ page. Every tool takes a JSON object and answers with a JSON object.
 Two read-only tools:
 
 - describe: Says what this page shows: the benchmark, its model, how many builds it holds and which builder did best.
-- list_runs: Lists every build: builder, minutes, dollars, tokens by kind, turns, lines written, suite, hidden checks passed and the game's link.
+- list_runs: Lists every build: builder, minutes, dollars (in all and by token kind), tokens by kind, turns, lines written,
+  suite, hidden checks passed and the game's link.
 
 ## Game pages: https://agents.cocode.dk/games/<run>/index.html
 

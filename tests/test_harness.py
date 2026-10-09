@@ -35,6 +35,18 @@ class UsageTest(unittest.TestCase):
         self.assertEqual((got["cost"], got["turns"], got["answer"]), (1.2346, 7, "ok"))
 
 
+class DollarsTest(unittest.TestCase):
+    RUN = {"run": "x", "input": 1_000_000, "cache_write": 3_000_000, "cache_write_1h": 1_000_000, "cache_read": 10_000_000,
+           "output": 1_000_000, "cost": 4 + 2 * 5 + 8 + 2 + 20}
+
+    def test_each_kind_at_its_price_with_one_hour_writes_dearer(self):
+        self.assertEqual(gallery.dollars(self.RUN), {"input": 4, "cache_write": 18, "cache_read": 2, "output": 20})
+
+    def test_a_breakdown_that_misses_the_reported_cost_cannot_ship(self):
+        with self.assertRaises(SystemExit):
+            gallery.dollars({**self.RUN, "cost": 45})
+
+
 class PageTest(unittest.TestCase):
     def test_a_misspelt_placeholder_cannot_ship(self):
         with self.assertRaises(KeyError):

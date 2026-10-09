@@ -14,15 +14,11 @@
 
 body { margin: 0; background: var(--ground); color: var(--ink); font: 16px/1.55 var(--body); padding-inline: 16px; }
 main { max-width: 1080px; margin: 0 auto; padding-block: 24px 48px; display: grid; gap: 40px; }
-footer { max-width: 1080px; margin: 0 auto; padding-block: 0 48px; color: var(--muted); font-size: 0.92rem; }
-footer a, .lang-switch { color: var(--build); }
 h1, h2 { font-family: var(--display); font-weight: 700; line-height: 1.15; text-wrap: balance; margin: 0; }
 h1 { font-size: clamp(2rem, 5vw, 3rem); letter-spacing: 0.01em; }
 h2 { font-size: 1.5rem; }
 p { margin: 0; max-width: 68ch; }
 .lede { font-size: 1.15rem; color: var(--muted); }
-.lang { justify-self: start; }
-.lang-switch { font-family: var(--display); font-weight: 500; font-size: 1rem; }
 .stack { display: grid; gap: 12px; }
 .verdict { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 20px; display: grid; gap: 10px; }
 .verdict strong { font-family: var(--display); font-size: 1.3rem; font-weight: 700; }
@@ -46,9 +42,13 @@ svg .axis { fill: var(--muted); }
 .card h3 { font-family: var(--display); font-size: 1.15rem; margin: 0; display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
 .facts { color: var(--muted); font-size: 0.92rem; font-variant-numeric: tabular-nums; }
 .play { font-family: var(--display); font-weight: 700; color: var(--build); text-decoration: none; }
-.play:hover, .play:focus-visible, .lang-switch:hover, footer a:hover { text-decoration: underline; }
+.play:hover, .play:focus-visible { text-decoration: underline; }
 a:focus-visible, summary:focus-visible { outline: 2px solid var(--build); outline-offset: 2px; }
 details { font-size: 0.9rem; }
 details li { margin-block: 4px; }
 ul { margin: 0; padding-inline-start: 20px; display: grid; gap: 6px; max-width: 72ch; }
 
+.byline { color: var(--muted); font-size: 0.95rem; }
+.byline a { color: var(--build); }
+/* The cocode.dk frame (brand.cocode.dk) lines up with the page's own column; body already has the 16px gutter. */
+cocode-head, cocode-foot { --cocode-max: 1080px; --cocode-gutter: 0px; }

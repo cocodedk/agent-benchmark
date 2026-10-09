@@ -6,6 +6,7 @@
 <title>Agent Harness Benchmark</title>
 <meta name="description" content="{{description}}">
 <meta name="robots" content="index, follow">
+<meta name="author" content="Babak Bandpey">
 <link rel="canonical" href="{{origin}}/">
 
 <meta property="og:type" content="website">
@@ -28,17 +29,21 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Semi+Condensed:wght@500;700&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&display=swap">
 <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="https://brand.cocode.dk/v1.css">
+<script type="module" src="https://brand.cocode.dk/v1.js"></script>
 <script type="application/ld+json">
 {{jsonld}}
 </script>
 </head>
 <body>
+<cocode-head project="Agent Harness Benchmark" accent="#3e6f9e" on-accent="#ffffff" links="Tank Duel:https://tanks.cocode.dk/,Source:{{repo}}"><a href="https://cocode.dk">cocode.dk</a></cocode-head>
 <main>
   <header class="stack">
     <h1>Three agent harnesses, one game</h1>
     <p class="lede">Claude Code, prime-agent and pi each got the same spec, the same empty checkout and the same model,
       Opus 5.5 at high thinking, and built a three.js Brick Breaker in one session. Same model, so what differs is the
       harness around it.</p>
+    <p class="byline">By <a href="https://linkedin.com/in/babakbandpey" rel="author">Babak Bandpey</a> · 9 October 2026</p>
   </header>
 
   <section class="verdict" id="verdict" aria-live="polite"></section>
@@ -60,6 +65,12 @@
   </section>
 
   <section class="stack">
+    <h2>What the dollars paid for</h2>
+    <p id="prices"></p>
+    <div class="scroll"><table id="dollars-table"></table></div>
+  </section>
+
+  <section class="stack">
     <h2>Play each build</h2>
     <p>Each game is the build exactly as its harness left it. A or ← and D or → move the paddle; Space launches the ball.</p>
     <div class="grid" id="cards"></div>
@@ -71,13 +82,11 @@
   </section>
 </main>
 
-<footer>
-  <p>© {{year}} <a href="https://cocode.dk">Cocode</a> · <a href="{{repo}}">Source on GitHub</a> ·
-    <a href="https://tanks.cocode.dk/">Tank Duel Benchmark</a></p>
-</footer>
+<cocode-foot project="Agent Harness Benchmark" repo="cocodedk/agent-benchmark"><a href="https://cocode.dk">Made by Babak Bandpey</a></cocode-foot>
 
 <script>
 const RUNS = /*DATA*/[];
+const PRICES = /*PRICES*/{};
 const money = n => "$" + n.toFixed(2);
 const k = n => n === 0 ? "0" : (n / 1000).toFixed(n < 100000 ? 1 : 0) + "K";
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -138,6 +147,21 @@ function chart() {
   el.innerHTML = svg;
 }
 
+function dollars() {
+  const per = n => "$" + n.toFixed(2);
+  document.getElementById("prices").textContent = `Opus 5.5 list prices per million tokens: uncached input ${per(PRICES.input)}, ` +
+    `cache write ${per(PRICES.cache_write_5m)} (5-minute) or ${per(PRICES.cache_write_1h)} (1-hour), cache read ${per(PRICES.cache_read)}, ` +
+    `output ${per(PRICES.output)}. A cache read costs a 25th of a 5-minute cache write, so the builder with the fewest tokens ` +
+    `is not always the cheapest: what counts is how many tokens were written to the cache and how many were output.`;
+  const cell = (r, key) => `<td class="num">${money(r.dollars[key])} <span class="facts">${Math.round(100 * r.dollars[key] / r.cost)}%</span></td>`;
+  const head = `<tr><th>Builder</th><th class="num">Uncached input</th><th class="num">Cache write</th><th class="num">Cache read</th>
+    <th class="num">Output</th><th class="num">Total</th></tr>`;
+  document.getElementById("dollars-table").innerHTML = head + ranked().map(r => `<tr>
+    <td><b>${esc(r.run)}</b>${r.cache_write_1h ? ` <span class="facts">${k(r.cache_write_1h)} of ${k(r.cache_write)} cache writes at the 1-hour price</span>` : ""}</td>
+    ${cell(r, "input")}${cell(r, "cache_write")}${cell(r, "cache_read")}${cell(r, "output")}
+    <td class="num"><b>${money(r.cost)}</b></td></tr>`).join("");
+}
+
 function cards() {
   document.getElementById("cards").innerHTML = ranked().map(r => `
     <article class="card">
@@ -151,7 +175,7 @@ function cards() {
     </article>`).join("");
 }
 
-verdict(); table(); chart(); cards();
+verdict(); table(); chart(); dollars(); cards();
 
 (async () => {
   const mc = document.modelContext;
@@ -160,8 +184,9 @@ verdict(); table(); chart(); cards();
     { name: "describe", description: "Says what this page shows: the benchmark, its model, how many builds it holds and which builder did best.",
       execute: async () => ({ ok: true, title: "Agent Harness Benchmark", game: "Brick Breaker", model: RUNS[0]?.model ?? null,
         builds: RUNS.length, checks: RUNS[0]?.checks ?? 0, best: ranked()[0]?.run ?? null }) },
-    { name: "list_runs", description: "Lists every build: builder, minutes, dollars, tokens by kind, turns, lines written, suite, hidden checks passed and the game's link.",
+    { name: "list_runs", description: "Lists every build: builder, minutes, dollars in all and by token kind, tokens by kind, turns, lines written, suite, hidden checks passed and the game's link.",
       execute: async () => ({ ok: true, runs: ranked().map(r => ({ run: r.run, harness: r.says, minutes: r.minutes, dollars: r.cost,
+        dollars_by_kind: { input: r.dollars.input, cache_write: r.dollars.cache_write, cache_read: r.dollars.cache_read, output: r.dollars.output },
         tokens: r.total_tokens, cache_read: r.cache_read, cache_write: r.cache_write, input: r.input, output: r.output, turns: r.turns,
         code_lines: r.code_lines, test_lines: r.test_lines, suite_green: r.suite, hidden: r.hidden, checks: r.checks,
         failed: r.failed.map(f => f.check), game: new URL(`games/${r.run}/index.html`, document.baseURI).href })) }) },
