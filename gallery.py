@@ -84,13 +84,14 @@ def script_json(value) -> str:
     return json.dumps(value).replace("<", "\\u003c")
 
 
-def page(rows: list[dict], today: datetime.date) -> str:
+def page(rows: list[dict]) -> str:
     jsonld = {"@context": "https://schema.org", "@type": "WebSite", "name": "Agent Harness Benchmark",
               "description": DESCRIPTION, "url": f"{ORIGIN}/", "inLanguage": "en", "codeRepository": REPO,
-              "author": {"@type": "Person", "name": "Babak Bandpey", "url": "https://cocode.dk"},
+              "author": {"@type": "Person", "name": "Babak Bandpey", "url": "https://cocode.dk",
+                         "sameAs": ["https://linkedin.com/in/babakbandpey", "https://github.com/cocodedk"]},
               "publisher": {"@type": "Organization", "name": "Cocode", "url": "https://cocode.dk"}}
     html = fill((HERE / "page.html").read_text(encoding="utf-8"), {
-        "origin": ORIGIN, "repo": REPO, "description": DESCRIPTION, "year": str(today.year),
+        "origin": ORIGIN, "repo": REPO, "description": DESCRIPTION,
         "jsonld": json.dumps(jsonld, indent=1), "method": "".join(f"<li>{item}</li>" for item in METHOD)})
     return html.replace("/*DATA*/[]", script_json(rows)).replace("/*PRICES*/{}", script_json(PRICES))
 
@@ -161,7 +162,7 @@ def main() -> None:
     rows = [summary(r) for r in runs if "hidden" in r]
     shutil.rmtree(SITE, ignore_errors=True)
     SITE.mkdir()
-    (SITE / "index.html").write_text(page(rows, today), encoding="utf-8")
+    (SITE / "index.html").write_text(page(rows), encoding="utf-8")
     for name in STATIC:
         shutil.copyfile(HERE / name, SITE / name)
     publish_games(rows)
