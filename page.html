@@ -60,6 +60,12 @@
   </section>
 
   <section class="stack">
+    <h2>What the dollars paid for</h2>
+    <p id="prices"></p>
+    <div class="scroll"><table id="dollars-table"></table></div>
+  </section>
+
+  <section class="stack">
     <h2>Play each build</h2>
     <p>Each game is the build exactly as its harness left it. A or ← and D or → move the paddle; Space launches the ball.</p>
     <div class="grid" id="cards"></div>
@@ -78,6 +84,7 @@
 
 <script>
 const RUNS = /*DATA*/[];
+const PRICES = /*PRICES*/{};
 const money = n => "$" + n.toFixed(2);
 const k = n => n === 0 ? "0" : (n / 1000).toFixed(n < 100000 ? 1 : 0) + "K";
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -138,6 +145,21 @@ function chart() {
   el.innerHTML = svg;
 }
 
+function dollars() {
+  const per = n => "$" + n.toFixed(2);
+  document.getElementById("prices").textContent = `Opus 5.5 list prices per million tokens: uncached input ${per(PRICES.input)}, ` +
+    `cache write ${per(PRICES.cache_write_5m)} (5-minute) or ${per(PRICES.cache_write_1h)} (1-hour), cache read ${per(PRICES.cache_read)}, ` +
+    `output ${per(PRICES.output)}. A cache read costs a 25th of a 5-minute cache write, so the builder with the fewest tokens ` +
+    `is not always the cheapest: what counts is how many tokens were written to the cache and how many were output.`;
+  const cell = (r, key) => `<td class="num">${money(r.dollars[key])} <span class="facts">${Math.round(100 * r.dollars[key] / r.cost)}%</span></td>`;
+  const head = `<tr><th>Builder</th><th class="num">Uncached input</th><th class="num">Cache write</th><th class="num">Cache read</th>
+    <th class="num">Output</th><th class="num">Total</th></tr>`;
+  document.getElementById("dollars-table").innerHTML = head + ranked().map(r => `<tr>
+    <td><b>${esc(r.run)}</b>${r.cache_write_1h ? ` <span class="facts">${k(r.cache_write_1h)} of ${k(r.cache_write)} cache writes at the 1-hour price</span>` : ""}</td>
+    ${cell(r, "input")}${cell(r, "cache_write")}${cell(r, "cache_read")}${cell(r, "output")}
+    <td class="num"><b>${money(r.cost)}</b></td></tr>`).join("");
+}
+
 function cards() {
   document.getElementById("cards").innerHTML = ranked().map(r => `
     <article class="card">
@@ -151,7 +173,7 @@ function cards() {
     </article>`).join("");
 }
 
-verdict(); table(); chart(); cards();
+verdict(); table(); chart(); dollars(); cards();
 
 (async () => {
   const mc = document.modelContext;
@@ -160,8 +182,9 @@ verdict(); table(); chart(); cards();
     { name: "describe", description: "Says what this page shows: the benchmark, its model, how many builds it holds and which builder did best.",
       execute: async () => ({ ok: true, title: "Agent Harness Benchmark", game: "Brick Breaker", model: RUNS[0]?.model ?? null,
         builds: RUNS.length, checks: RUNS[0]?.checks ?? 0, best: ranked()[0]?.run ?? null }) },
-    { name: "list_runs", description: "Lists every build: builder, minutes, dollars, tokens by kind, turns, lines written, suite, hidden checks passed and the game's link.",
+    { name: "list_runs", description: "Lists every build: builder, minutes, dollars in all and by token kind, tokens by kind, turns, lines written, suite, hidden checks passed and the game's link.",
       execute: async () => ({ ok: true, runs: ranked().map(r => ({ run: r.run, harness: r.says, minutes: r.minutes, dollars: r.cost,
+        dollars_by_kind: { input: r.dollars.input, cache_write: r.dollars.cache_write, cache_read: r.dollars.cache_read, output: r.dollars.output },
         tokens: r.total_tokens, cache_read: r.cache_read, cache_write: r.cache_write, input: r.input, output: r.output, turns: r.turns,
         code_lines: r.code_lines, test_lines: r.test_lines, suite_green: r.suite, hidden: r.hidden, checks: r.checks,
         failed: r.failed.map(f => f.check), game: new URL(`games/${r.run}/index.html`, document.baseURI).href })) }) },

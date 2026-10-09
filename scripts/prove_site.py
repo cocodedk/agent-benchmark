@@ -28,6 +28,10 @@ def main() -> int:
         problems.append(f"describe answered {about}")
     if listed.get("ok") is not True or {r["run"] for r in listed.get("runs", [])} != runs:
         problems.append(f"list_runs listed {[r.get('run') for r in listed.get('runs', [])]}, expected {sorted(runs)}")
+    for r in listed.get("runs", []):
+        paid = sum((r.get("dollars_by_kind") or {}).values())
+        if abs(paid - r.get("dollars", -1)) > 0.01:
+            problems.append(f"{r.get('run')}: dollars by kind add up to {paid:.4f}, not {r.get('dollars')}")
     if g.errors:
         problems.append(f"page errors: {g.errors[:3]}")
     print("\n".join(problems) or f"proved: {sorted(tools)} answer for {len(runs)} runs; best {about['best']}")

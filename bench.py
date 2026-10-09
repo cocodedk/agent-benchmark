@@ -53,7 +53,8 @@ def claude_usage(stdout: str) -> dict:
     body = json.loads(stdout)
     usage = body.get("modelUsage") or {}
     total = lambda key: sum(u.get(key, 0) for u in usage.values())  # noqa: E731
-    return {"input": total("inputTokens"), "cache_write": total("cacheCreationInputTokens"),
+    one_hour = ((body.get("usage") or {}).get("cache_creation") or {}).get("ephemeral_1h_input_tokens", 0)
+    return {"input": total("inputTokens"), "cache_write": total("cacheCreationInputTokens"), "cache_write_1h": one_hour,
             "cache_read": total("cacheReadInputTokens"), "output": total("outputTokens"),
             "cost": round(body.get("total_cost_usd") or 0, 4), "turns": body.get("num_turns"),
             "models": sorted(usage), "error": bool(body.get("is_error")), "answer": str(body.get("result") or "")}
@@ -73,7 +74,8 @@ def stream_usage(stdout: str) -> dict:
     usage = [m.get("usage") or {} for m in said]
     total = lambda key: sum(u.get(key, 0) for u in usage)  # noqa: E731
     last = next((c.get("text", "") for c in (said[-1].get("content") or []) if c.get("type") == "text"), "") if said else ""
-    return {"input": total("input"), "cache_write": total("cacheWrite"), "cache_read": total("cacheRead"),
+    # Both write 5-minute cache entries: their reported costs match the 5-minute write price exactly.
+    return {"input": total("input"), "cache_write": total("cacheWrite"), "cache_write_1h": 0, "cache_read": total("cacheRead"),
             "output": total("output"), "cost": round(sum((u.get("cost") or {}).get("total", 0) for u in usage), 4),
             "turns": len(said), "models": sorted({m.get("model", "?") for m in said}),
             "error": not said or said[-1].get("stopReason") == "error", "answer": last}
