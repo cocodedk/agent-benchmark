@@ -1,0 +1,13 @@
+# Brick Breaker
+
+> A three.js brick breaker game. `index.html` declares WebMCP tools (`document.modelContext`), so an agent can play and inspect it without scraping.
+
+## WebMCP tools on index.html
+
+- `describe` `{}`: reads the game state (field, paddle, ball, standing bricks, score, lives, state, paused).
+- `pause` `{"paused": true}`: pauses or resumes real-time play.
+- `step` `{"seconds": 1.5}`: while paused, advances the game in 1/60 s steps (0 < seconds <= 30).
+- `launch` `{}`: launches a resting ball straight up, as Space does.
+- `place_paddle` `{"x": 3}`: moves the paddle centre to x in -8..8.
+- `place_ball` `{"x": 0, "z": 5, "vx": 0, "vz": -1}`: puts the ball in play there, moving along (vx, vz) at 10 units/s.
+- `reset` `{}`: starts a new game; pause is kept.

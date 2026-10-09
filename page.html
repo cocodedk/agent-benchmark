@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agent Harness Benchmark</title>
+<meta name="description" content="{{description}}">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="{{origin}}/">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Agent Harness Benchmark">
+<meta property="og:title" content="Agent Harness Benchmark">
+<meta property="og:description" content="{{description}}">
+<meta property="og:url" content="{{origin}}/">
+<meta property="og:image" content="{{origin}}/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Agent Harness Benchmark: Claude Code, prime-agent and pi each build one three.js Brick Breaker">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Agent Harness Benchmark">
+<meta name="twitter:description" content="{{description}}">
+<meta name="twitter:image" content="{{origin}}/og.png">
+
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Semi+Condensed:wght@500;700&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&display=swap">
+<link rel="stylesheet" href="styles.css">
+<script type="application/ld+json">
+{{jsonld}}
+</script>
+</head>
+<body>
+<main>
+  <header class="stack">
+    <h1>Three agent harnesses, one game</h1>
+    <p class="lede">Claude Code, prime-agent and pi each got the same spec, the same empty checkout and the same model,
+      Opus 5.5 at high thinking, and built a three.js Brick Breaker in one session. Same model, so what differs is the
+      harness around it.</p>
+  </header>
+
+  <section class="verdict" id="verdict" aria-live="polite"></section>
+
+  <section class="stack">
+    <h2>The numbers</h2>
+    <div class="scroll"><table id="runs-table"></table></div>
+  </section>
+
+  <section class="stack">
+    <h2>Where the tokens went</h2>
+    <div class="legend">
+      <span><span class="swatch" style="background:var(--t1)"></span>cache read</span>
+      <span><span class="swatch" style="background:var(--t2)"></span>cache write</span>
+      <span><span class="swatch" style="background:var(--t3)"></span>uncached input</span>
+      <span><span class="swatch" style="background:var(--t4)"></span>output</span>
+    </div>
+    <div class="scroll"><svg id="chart" role="img" aria-label="Tokens per builder, split into cache read, cache write, uncached input and output"></svg></div>
+  </section>
+
+  <section class="stack">
+    <h2>Play each build</h2>
+    <p>Each game is the build exactly as its harness left it. A or ← and D or → move the paddle; Space launches the ball.</p>
+    <div class="grid" id="cards"></div>
+  </section>
+
+  <section class="stack">
+    <h2>How it was run</h2>
+    <ul>{{method}}</ul>
+  </section>
+</main>
+
+<footer>
+  <p>© {{year}} <a href="https://cocode.dk">Cocode</a> · <a href="{{repo}}">Source on GitHub</a> ·
+    <a href="https://tanks.cocode.dk/">Tank Duel Benchmark</a></p>
+</footer>
+
+<script>
+const RUNS = /*DATA*/[];
+const money = n => "$" + n.toFixed(2);
+const k = n => n === 0 ? "0" : (n / 1000).toFixed(n < 100000 ? 1 : 0) + "K";
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const ranked = () => [...RUNS].sort((a, b) => b.hidden - a.hidden || a.cost - b.cost);
+
+function verdict() {
+  const [best, ...rest] = ranked(), el = document.getElementById("verdict");
+  if (!best) { el.innerHTML = "<strong>No finished runs yet.</strong>"; return; }
+  const line = r => `${r.says}: ${r.hidden}/${r.checks} hidden checks, ${money(r.cost)}, ${r.minutes} min, ${k(r.total_tokens)} tokens`;
+  if (RUNS.every(r => r.hidden === r.checks)) {
+    const least = key => [...RUNS].sort((a, b) => a[key] - b[key])[0];
+    const [cheap, quick, lean] = [least("cost"), least("minutes"), least("total_tokens")];
+    el.innerHTML = `<strong>All ${RUNS.length} passed every one of the ${best.checks} hidden checks.</strong>
+      <p>${esc(`Cheapest: ${cheap.run}, ${money(cheap.cost)}. Fastest: ${quick.run}, ${quick.minutes} minutes. ` +
+        `Fewest tokens: ${lean.run}, ${k(lean.total_tokens)}.`)}</p>`;
+    return;
+  }
+  el.innerHTML = `<strong>${esc(best.says)} did best: ${best.hidden} of ${best.checks} hidden checks for ${money(best.cost)} in ${best.minutes} minutes.</strong>
+    <p>${rest.map(r => esc(line(r))).join(". ")}.</p>`;
+}
+
+function table() {
+  const head = `<tr><th>Builder</th><th class="num">Minutes</th><th class="num">Dollars</th><th class="num">Tokens</th>
+    <th class="num">Output</th><th class="num">Turns</th><th class="num">Code + tests</th><th>Own suite</th><th>Hidden checks</th></tr>`;
+  document.getElementById("runs-table").innerHTML = head + ranked().map(r => `<tr>
+    <td><b>${esc(r.run)}</b> <span class="facts">${esc(r.says)}</span></td>
+    <td class="num">${r.minutes}</td><td class="num">${money(r.cost)}</td><td class="num">${k(r.total_tokens)}</td>
+    <td class="num">${k(r.output)}</td><td class="num">${r.turns}</td><td class="num">${r.code_lines} + ${r.test_lines}</td>
+    <td><span class="pill ${r.suite ? "ok" : "bad"}">${r.suite ? "green" : "red"}</span></td>
+    <td><span class="pill ${r.hidden === r.checks ? "ok" : "bad"}">${r.hidden}/${r.checks}</span></td></tr>`).join("");
+}
+
+function chart() {
+  const parts = [["cache_read", "--t1"], ["cache_write", "--t2"], ["input", "--t3"], ["output", "--t4"]];
+  const rows = ranked(), most = Math.max(...rows.map(r => r.total_tokens), 1), tick = most > 4e6 ? 1e6 : most > 1e6 ? 5e5 : 1e5;
+  const left = 96, width = 600, bar = 22, gap = 12, top = 8, scale = width / (Math.ceil(most / tick) * tick);
+  const height = top + rows.length * (bar + gap) + 28;
+  let svg = "";
+  for (let t = 0; t * scale <= width + 0.5; t += tick) {
+    const x = left + t * scale;
+    svg += `<line x1="${x}" x2="${x}" y1="${top}" y2="${height - 24}" stroke="var(--rule)" />`;
+    svg += `<text class="axis" x="${x}" y="${height - 8}" text-anchor="middle">${k(t)}</text>`;
+  }
+  rows.forEach((r, i) => {
+    const y = top + i * (bar + gap);
+    let x = left;
+    svg += `<text x="0" y="${y + bar - 6}">${esc(r.run)}</text>`;
+    for (const [key, colour] of parts) {
+      const w = r[key] * scale;
+      svg += `<rect x="${x}" y="${y}" width="${w}" height="${bar}" fill="var(${colour})"><title>${esc(r.run)}: ${r[key].toLocaleString("en")} ${key.replace("_", " ")} tokens</title></rect>`;
+      x += w;
+    }
+    svg += `<text x="${x + 6}" y="${y + bar - 6}">${k(r.total_tokens)}</text>`;
+  });
+  const el = document.getElementById("chart");
+  el.setAttribute("viewBox", `0 0 ${left + width + 70} ${height}`);
+  el.setAttribute("width", left + width + 70);
+  el.innerHTML = svg;
+}
+
+function cards() {
+  document.getElementById("cards").innerHTML = ranked().map(r => `
+    <article class="card">
+      <img src="shots/${r.run}.png" width="${r.shot[0]}" height="${r.shot[1]}" loading="lazy" alt="The first frame of ${esc(r.run)}'s Brick Breaker">
+      <div class="body">
+        <h3>${esc(r.run)} <a class="play" href="games/${r.run}/index.html" target="_blank" rel="noopener">Play</a></h3>
+        <div class="facts">${r.minutes} min · ${money(r.cost)} · ${k(r.total_tokens)} tokens · ${r.hidden}/${r.checks} hidden checks</div>
+        ${r.failed.length ? `<details><summary class="bad">Failed: ${r.failed.map(f => esc(f.check)).join(", ")}</summary><ul>${r.failed.map(f => `<li><b>${esc(f.check)}</b>: ${esc(f.why)}</li>`).join("")}</ul></details>` : ""}
+        ${r.answer ? `<details><summary>Its last words</summary><p>${esc(r.answer)}</p></details>` : ""}
+      </div>
+    </article>`).join("");
+}
+
+verdict(); table(); chart(); cards();
+
+(async () => {
+  const mc = document.modelContext;
+  if (!mc) return;
+  const tools = [
+    { name: "describe", description: "Says what this page shows: the benchmark, its model, how many builds it holds and which builder did best.",
+      execute: async () => ({ ok: true, title: "Agent Harness Benchmark", game: "Brick Breaker", model: RUNS[0]?.model ?? null,
+        builds: RUNS.length, checks: RUNS[0]?.checks ?? 0, best: ranked()[0]?.run ?? null }) },
+    { name: "list_runs", description: "Lists every build: builder, minutes, dollars, tokens by kind, turns, lines written, suite, hidden checks passed and the game's link.",
+      execute: async () => ({ ok: true, runs: ranked().map(r => ({ run: r.run, harness: r.says, minutes: r.minutes, dollars: r.cost,
+        tokens: r.total_tokens, cache_read: r.cache_read, cache_write: r.cache_write, input: r.input, output: r.output, turns: r.turns,
+        code_lines: r.code_lines, test_lines: r.test_lines, suite_green: r.suite, hidden: r.hidden, checks: r.checks,
+        failed: r.failed.map(f => f.check), game: new URL(`games/${r.run}/index.html`, document.baseURI).href })) }) },
+  ];
+  for (const tool of tools) {
+    try { await mc.registerTool({ ...tool, inputSchema: { type: "object", properties: {} }, annotations: { readOnlyHint: true } }); }
+    catch { /* one refused tool must not stop the rest */ }
+  }
+})();
+</script>
+</body>
+</html>

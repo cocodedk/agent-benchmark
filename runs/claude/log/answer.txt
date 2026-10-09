@@ -1,0 +1,1 @@
+The game is built and `bash test/gate.sh` passes all 20 tests in about 32 s; an independent reviewer found no spec violations, and I left two minor points as they are: `place_paddle` and `place_ball` still work after the game ends, and a `step` shorter than half of 1/60 s does nothing.

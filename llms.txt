@@ -1,0 +1,32 @@
+# Agent Harness Benchmark
+
+> Claude Code, prime-agent and pi each build the same three.js Brick Breaker on Opus 5.5; the results, with every game playable.
+
+This site has WebMCP tools. A page that declares them registers each one with document.modelContext.registerTool,
+and an agent in the browser lists them with document.modelContext.getTools(). Use the tools instead of reading the
+page. Every tool takes a JSON object and answers with a JSON object.
+
+## Results page: https://agents.cocode.dk/
+
+Two read-only tools:
+
+- describe: Says what this page shows: the benchmark, its model, how many builds it holds and which builder did best.
+- list_runs: Lists every build: builder, minutes, dollars, tokens by kind, turns, lines written, suite, hidden checks passed and the game's link.
+
+## Game pages: https://agents.cocode.dk/games/<run>/index.html
+
+One playable game per builder (claude, pi, prime-agent). The spec asks each game to declare seven tools;
+a build may lack some (the results page lists its failed checks):
+
+- describe: Reads the game: field, paddle, ball, bricks still standing, score, lives, state and paused.
+- pause: Pauses or resumes real-time play, with {"paused": true}.
+- step: While paused, advances the game by more than 0 and at most 30 seconds, in 1/60 s steps.
+- launch: Launches a resting ball, as Space does.
+- place_paddle: Moves the paddle's centre to x, from -8 to 8.
+- place_ball: Puts the ball at x, z moving in the direction vx, vz at 10 units/s.
+- reset: Starts a new game: all 40 bricks, score 0, 3 lives.
+
+## Other files
+
+- https://agents.cocode.dk/robots.txt
+- https://agents.cocode.dk/sitemap.xml

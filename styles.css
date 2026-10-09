@@ -1,0 +1,54 @@
+/* The results page. */
+:root {
+  --ground: #f3f4ef; --panel: #ffffff; --ink: #1f2420; --muted: #5d665e; --rule: #d5d9cf;
+  --build: #3e6f9e; --repair: #c9783a; --t1: #3e6f9e; --t2: #8fb3d6; --t3: #c9783a; --t4: #2f7d4a; --good: #2f7d4a; --warn: #a3542a;
+  --display: "Saira Semi Condensed", "Arial Narrow", sans-serif;
+  --body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --ground: #161a17; --panel: #1f2420; --ink: #e6e9e2; --muted: #a2aa9f; --rule: #343b35;
+  --build: #6fa3d6; --repair: #e39a5f; --t1: #6fa3d6; --t2: #3b5f80; --t3: #e39a5f; --t4: #6cc48a; --good: #6cc48a; --warn: #e48a5c; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --ground: #161a17; --panel: #1f2420; --ink: #e6e9e2; --muted: #a2aa9f; --rule: #343b35;
+  --build: #6fa3d6; --repair: #e39a5f; --t1: #6fa3d6; --t2: #3b5f80; --t3: #e39a5f; --t4: #6cc48a; --good: #6cc48a; --warn: #e48a5c; color-scheme: dark }
+
+body { margin: 0; background: var(--ground); color: var(--ink); font: 16px/1.55 var(--body); padding-inline: 16px; }
+main { max-width: 1080px; margin: 0 auto; padding-block: 24px 48px; display: grid; gap: 40px; }
+footer { max-width: 1080px; margin: 0 auto; padding-block: 0 48px; color: var(--muted); font-size: 0.92rem; }
+footer a, .lang-switch { color: var(--build); }
+h1, h2 { font-family: var(--display); font-weight: 700; line-height: 1.15; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(2rem, 5vw, 3rem); letter-spacing: 0.01em; }
+h2 { font-size: 1.5rem; }
+p { margin: 0; max-width: 68ch; }
+.lede { font-size: 1.15rem; color: var(--muted); }
+.lang { justify-self: start; }
+.lang-switch { font-family: var(--display); font-weight: 500; font-size: 1rem; }
+.stack { display: grid; gap: 12px; }
+.verdict { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 20px; display: grid; gap: 10px; }
+.verdict strong { font-family: var(--display); font-size: 1.3rem; font-weight: 700; }
+.scroll { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; min-width: 720px; }
+th, td { text-align: start; padding: 8px 10px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font-family: var(--display); font-weight: 500; color: var(--muted); font-size: 0.9rem; letter-spacing: 0.03em; }
+td.num, th.num { text-align: end; }
+.pill { display: inline-block; padding: 1px 8px; border-radius: 99px; font-size: 0.85rem; border: 1px solid currentColor; }
+.ok { color: var(--good); } .bad { color: var(--warn); }
+.legend { display: flex; gap: 16px; flex-wrap: wrap; color: var(--muted); font-size: 0.9rem; }
+.swatch { display: inline-block; width: 12px; height: 12px; border-radius: 2px; vertical-align: -1px; margin-inline-end: 6px; }
+.swatch.build { background: var(--build); } .swatch.repair { background: var(--repair); }
+svg { direction: ltr; }
+svg text { fill: var(--ink); font: 12px var(--body); }
+svg .axis { fill: var(--muted); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+.card { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; display: grid; min-width: 0; }
+.card img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; border-bottom: 1px solid var(--rule); }
+.card .body { padding: 12px 14px; display: grid; gap: 6px; }
+.card h3 { font-family: var(--display); font-size: 1.15rem; margin: 0; display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.facts { color: var(--muted); font-size: 0.92rem; font-variant-numeric: tabular-nums; }
+.play { font-family: var(--display); font-weight: 700; color: var(--build); text-decoration: none; }
+.play:hover, .play:focus-visible, .lang-switch:hover, footer a:hover { text-decoration: underline; }
+a:focus-visible, summary:focus-visible { outline: 2px solid var(--build); outline-offset: 2px; }
+details { font-size: 0.9rem; }
+details li { margin-block: 4px; }
+ul { margin: 0; padding-inline-start: 20px; display: grid; gap: 6px; max-width: 72ch; }
+

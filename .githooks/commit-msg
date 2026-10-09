@@ -1,0 +1,10 @@
+#!/bin/sh
+# Conventional Commits: the subject (the first line) reads type(scope)!: description.
+set -eu
+subject=$(head -n 1 "$1")
+if ! printf '%s\n' "$subject" | grep -qE '^(feat|fix|chore|docs|style|refactor|test|ci|build|perf|revert)(\(.+\))?!?: .+'; then
+  echo "ERROR: Commit subject must follow Conventional Commits." >&2
+  echo "  Example: feat: add user login" >&2
+  echo "  Types: feat|fix|chore|docs|style|refactor|test|ci|build|perf|revert" >&2
+  exit 1
+fi

@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: ['**']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: '3.12'
+
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10
+
+      - name: Lint the harness
+        run: uvx ruff@0.16.8 check --exclude runs .
+
+      - name: Unit tests (no model is called)
+        run: python3 -m unittest discover -s tests -v
+
+      - name: The results site builds
+        run: python3 gallery.py > /dev/null

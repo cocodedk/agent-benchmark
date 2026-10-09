@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <!-- Open Graph card, 1200 by 630. og.png is rendered from this file by scripts/render_og.py. -->
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Saira+Semi+Condensed:wght@700&amp;family=Source+Sans+3:wght@400;600&amp;display=swap");
+    .title { font: 700 104px "Saira Semi Condensed", "Arial Narrow", sans-serif; fill: #1f2420; }
+    .deck { font: 400 28px "Source Sans 3", "Segoe UI", sans-serif; fill: #5d665e; }
+    .domain { font: 600 26px "Source Sans 3", "Segoe UI", sans-serif; fill: #5d665e; }
+  </style>
+
+  <rect width="1200" height="630" fill="#f3f4ef"/>
+
+  <text class="title" x="72" y="233">Agent Harness</text>
+  <text class="title" x="72" y="340">Benchmark</text>
+  <text class="deck" x="72" y="396">Claude Code, prime-agent and pi each build</text>
+  <text class="deck" x="72" y="430">one three.js Brick Breaker on Opus 5.5:</text>
+  <text class="deck" x="72" y="464">time, tokens, cost and hidden checks.</text>
+  <text class="domain" x="72" y="565">agents.cocode.dk</text>
+
+  <!-- The field plan, to the game's spec: 20 x 28 units at 14 px a unit, 5 rows of 8 bricks, paddle at z = 12. -->
+  <rect x="820" y="119" width="280" height="392" fill="#ffffff" stroke="#5d665e" stroke-width="2"/>
+  <g stroke="#ffffff" stroke-width="2">
+    <rect x="820" y="147" width="280" height="14" fill="#3e6f9e"/>
+    <rect x="820" y="161" width="280" height="14" fill="#5a86b3"/>
+    <rect x="820" y="175" width="280" height="14" fill="#8fb3d6"/>
+    <rect x="820" y="189" width="280" height="14" fill="#c9783a"/>
+    <rect x="820" y="203" width="280" height="14" fill="#e3a46f"/>
+    <path d="M855 147v70M890 147v70M925 147v70M960 147v70M995 147v70M1030 147v70M1065 147v70"/>
+  </g>
+  <rect x="932" y="464" width="56" height="7" rx="2" fill="#1f2420"/>
+  <line x1="960" y1="459" x2="1000" y2="330" stroke="#5d665e" stroke-width="2" stroke-dasharray="4 6"/>
+  <circle cx="1000" cy="330" r="5" fill="#1f2420"/>
+</svg>

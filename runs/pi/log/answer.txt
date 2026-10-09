@@ -1,0 +1,1 @@
+I built the game (`index.html`, `src/game.js`, `src/view.js`, `src/tools.js`, `src/main.js`, plus an `llms.txt` listing its WebMCP tools); `bash test/gate.sh` passes all 24 tests in about 47 s, covering every "done when" point.

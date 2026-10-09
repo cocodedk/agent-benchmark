@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Brick Breaker</title>
+  <link rel="icon" href="data:,">
+  <style>
+    html, body { margin: 0; height: 100%; overflow: hidden; background: #10131a; font-family: system-ui, sans-serif; }
+    #game { display: block; width: 100vw; height: 100vh; }
+    #hud { position: fixed; top: 12px; left: 16px; color: #ecf0f1; text-shadow: 0 1px 2px #000; }
+    #hud-score { font-size: 22px; font-weight: bold; white-space: pre; }
+    #banner { position: fixed; top: 40%; left: 0; right: 0; text-align: center; font-size: 64px;
+              font-weight: bold; color: #fff; text-shadow: 0 2px 8px #000; }
+  </style>
+  <script type="importmap">{"imports": {"three": "./vendor/three.module.min.js"}}</script>
+</head>
+<body>
+  <canvas id="game"></canvas>
+  <div id="hud">
+    <div id="hud-score">Score 0   Lives 3</div>
+    <div id="hud-help">A / &larr; left, D / &rarr; right, Space launches</div>
+  </div>
+  <div id="banner" hidden></div>
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>

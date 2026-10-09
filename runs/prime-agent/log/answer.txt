@@ -1,0 +1,1 @@
+I built the Brick Breaker game with its seven WebMCP tools and 18 tests, and `bash test/gate.sh` passes all 18 in about 12–36 s with no console errors; the game is in `index.html` and `src/`, the new tests are `test/test_play.py`, `test/test_end.py` and `test/base.py`, and `test/test_smoke.py` was rewritten.

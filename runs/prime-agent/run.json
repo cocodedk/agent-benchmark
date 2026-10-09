@@ -1,0 +1,86 @@
+{
+ "run": "prime-agent",
+ "says": "prime-agent -p",
+ "model": "claude-opus-5-5",
+ "thinking": "high",
+ "started": "2026-10-09T11:57:54",
+ "minutes": 4.9,
+ "exit": 0,
+ "timed_out": false,
+ "input": 26,
+ "cache_write": 59491,
+ "cache_read": 492675,
+ "output": 17597,
+ "cost": 0.748,
+ "turns": 12,
+ "models": [
+  "claude-opus-5-5"
+ ],
+ "error": false,
+ "total_tokens": 569789,
+ "suite": {
+  "passed": true,
+  "wall_s": 29
+ },
+ "code_lines": 303,
+ "test_lines": 182,
+ "finished": "2026-10-09T12:03:16",
+ "hidden": {
+  "passed": 13,
+  "total": 13,
+  "checks": [
+   {
+    "check": "opens_clean",
+    "passed": true
+   },
+   {
+    "check": "lists_the_seven_tools",
+    "passed": true
+   },
+   {
+    "check": "starts_as_the_spec_says",
+    "passed": true
+   },
+   {
+    "check": "keys_move_the_paddle_and_the_resting_ball",
+    "passed": true
+   },
+   {
+    "check": "space_launches_straight_up_once",
+    "passed": true
+   },
+   {
+    "check": "the_ball_moves_ten_units_a_second",
+    "passed": true
+   },
+   {
+    "check": "a_ball_breaks_the_brick_above_and_comes_back",
+    "passed": true
+   },
+   {
+    "check": "walls_reflect_the_ball",
+    "passed": true
+   },
+   {
+    "check": "the_paddle_angles_the_ball",
+    "passed": true
+   },
+   {
+    "check": "a_lost_ball_costs_a_life",
+    "passed": true
+   },
+   {
+    "check": "three_lost_balls_end_the_game",
+    "passed": true
+   },
+   {
+    "check": "breaking_every_brick_wins",
+    "passed": true
+   },
+   {
+    "check": "tools_refuse_bad_input",
+    "passed": true
+   }
+  ]
+ }
+}

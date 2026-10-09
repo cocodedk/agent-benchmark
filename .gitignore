@@ -1,0 +1,4 @@
+__pycache__/
+runs/*/game/vendor/
+site/
+site-proof.png
